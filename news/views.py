@@ -2,6 +2,14 @@ from django.shortcuts import render,redirect
 from django.http  import HttpResponse
 import datetime as dt
 from .models import Article
+from .forms import NewArticleForm
+from django.contrib.auth.decorators import login_required
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import  MoringaMerch
+from .serializer import MerchSerializer
+from rest_framework import status
+
 
 
 
@@ -61,4 +69,35 @@ def search_results(request):
 
     else:
         message = "You haven't searched for any term"
-        return render(request, 'all-news/search.html',{"message":message})    
+        return render(request, 'all-news/search.html',{"message":message})   
+def article(request,article_id):
+    try:
+        article = Article.objects.get(id = article_id)
+    except DoesNotExist:
+        raise Http404()
+    return render(request,"all-news/article.html", {"article":article})  
+@login_required(login_url='/accounts/login/')
+def new_article(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.editor = current_user
+            article.save()
+        return redirect('newsToday')
+
+    else:
+        form = NewArticleForm()
+    return render(request, 'new_article.html', {"form": form})           
+class MerchList(APIView):
+    def get(self, request, format=None):
+        all_merch = MoringaMerch.objects.all()
+        serializers = MerchSerializer(all_merch, many=True)
+        return Response(serializers.data)    
+    def post(self, request, format=None):
+        serializers = MerchSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)    

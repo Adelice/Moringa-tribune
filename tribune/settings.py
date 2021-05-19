@@ -44,6 +44,7 @@ DATABASES['default'].update(db_from_env)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,7 +53,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = '3+6t-l0&6oij=^xn*o9dyqaxlbykw^-^ey!t%t-*&-^@v)d$^)'
+SECRET_KEY = '3+6t-l0&6oij=^xn*o9dyqaxlbykw^-^ey!t%t-*&-^@v)d$^)'
 
 
 
@@ -61,6 +62,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 
 INSTALLED_APPS = [
+    'tinymce',
+    'rest_framework',
     'news.apps.NewsConfig',
     'bootstrap3',
     'django.contrib.admin',
